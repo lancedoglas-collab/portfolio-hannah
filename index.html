@@ -1057,6 +1057,41 @@
       overflow: hidden;
     }
 
+    /* Toast confirming the email address was copied. A mailto: link does nothing
+       visible on a machine with no mail app configured, which reads as broken. */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translate(-50%, 20px);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 50px;
+      border: 1px solid var(--accent-purple);
+      background: var(--accent-purple-pill);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .toast svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent-purple);
+    }
+
     .contact-form-card h3 {
       font-size: 1.5rem;
       font-weight: 800;
@@ -2006,13 +2041,13 @@
               </div>
             </a>
 
-            <a href="tel:+639123456789" class="contact-detail-item">
+            <a href="tel:+639935096723" class="contact-detail-item">
               <div class="contact-icon-wrapper">
                 <i data-lucide="phone"></i>
               </div>
               <div class="contact-detail-text">
                 <span>Phone Number</span>
-                <strong>+63 912 345 6789</strong>
+                <strong>0993 509 6723</strong>
               </div>
             </a>
 
@@ -2102,6 +2137,12 @@
     </section>
   </main>
 
+  <!-- Copy confirmation toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i data-lucide="check-circle"></i>
+    <span id="toastText"></span>
+  </div>
+
   <!-- RESUME PREVIEW MODAL -->
   <div class="resume-modal" id="resumeModal" role="dialog" aria-modal="true" aria-labelledby="resumeModalTitle" hidden>
     <div class="resume-modal-panel">
@@ -2181,8 +2222,8 @@
         <a href="mailto:hannahmariedelacruz07@gmail.com" class="footer-contact-item">
           <i data-lucide="mail"></i> hannahmariedelacruz07@gmail.com
         </a>
-        <a href="tel:+639123456789" class="footer-contact-item">
-          <i data-lucide="phone"></i> +63 912 345 6789
+        <a href="tel:+639935096723" class="footer-contact-item">
+          <i data-lucide="phone"></i> 0993 509 6723
         </a>
         <span class="footer-availability">
           <span class="availcard__dot" aria-hidden="true"></span> Open for Opportunities
@@ -2275,6 +2316,31 @@
       projectVideos.forEach(v => videoObserver.observe(v));
     }
 
+    // Toast
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    let toastTimer;
+
+    function showToast(message) {
+      toastText.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    // Every mailto: link also copies the address. On a machine with no mail app
+    // the link silently does nothing, so without this it looks broken.
+    document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
+      link.addEventListener('click', () => {
+        const address = link.getAttribute('href').replace('mailto:', '').split('?')[0];
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(address)
+            .then(() => showToast('Email address copied'))
+            .catch(() => {});
+        }
+      });
+    });
+
     // Resume preview modal
     const resumeModal = document.getElementById('resumeModal');
     const resumePreviewBtn = document.getElementById('resumePreviewBtn');
@@ -2354,6 +2420,8 @@
         contactForm.reset();
         showStatus('success', 'Thank you! Your message has been sent successfully.');
       } catch (err) {
+        // The real reason goes to the console; visitors get the plain message
+        console.error('Contact form failed:', err);
         showStatus('error', `Sorry, that didn't send. Please email me at ${MY_EMAIL}.`);
       } finally {
         submitBtn.disabled = false;
