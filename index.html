@@ -327,56 +327,15 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      /* Room for the availability card, which hangs below the portrait */
-      padding-bottom: 3rem;
     }
 
-    /* Anchors the availability card to the photo rather than to the whole column */
     .hero-portrait {
       position: relative;
       width: fit-content;
       margin: 0 auto;
     }
 
-    /* Availability card straddling the portrait's bottom-right corner: it clips
-       the shoulder rather than the face, with most of its mass on the page. */
-    .availcard {
-      position: absolute;
-      right: -14%;
-      bottom: -9%;
-      z-index: 3;
-      width: min(236px, 86%);
-      padding: 0.9rem 1rem;
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      background: var(--card-bg);
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-      box-shadow: var(--shadow);
-      text-align: left;
-      animation: availfloat 6s ease-in-out 1s infinite;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    @keyframes availfloat {
-      50% { transform: translateY(-7px); }
-    }
-
-    .availcard:hover {
-      border-color: var(--accent-purple);
-      box-shadow: var(--shadow), 0 0 32px -10px var(--card-glow);
-    }
-
-    .availcard__status {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
+    /* Pulsing status dot, used by the "Open for Opportunities" pill in the footer */
     .availcard__dot {
       width: 8px;
       height: 8px;
@@ -391,36 +350,7 @@
       50% { box-shadow: 0 0 0 7px transparent; }
     }
 
-    .availcard__detail {
-      font-size: 0.82rem;
-      line-height: 1.55;
-      color: var(--text-muted);
-    }
-
-    .availcard__link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      margin-top: 0.7rem;
-      padding-top: 0.65rem;
-      border-top: 1px solid var(--card-border);
-      width: 100%;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--accent-purple);
-      text-decoration: none;
-      transition: gap 0.2s ease;
-    }
-
-    .availcard__link:hover { gap: 0.75rem; }
-
-    .availcard__link svg {
-      width: 14px;
-      height: 14px;
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      .availcard,
       .availcard__dot {
         animation: none;
       }
@@ -829,9 +759,12 @@
       padding-bottom: 6rem;
     }
 
+    /* Single card since the message form was removed: centre it rather than
+       leaving it stranded in the left column of a two-column grid. */
     .contact-grid {
       display: grid;
-      grid-template-columns: 1fr 1.3fr;
+      grid-template-columns: minmax(0, 620px);
+      justify-content: center;
       gap: 2.5rem;
       align-items: start;
     }
@@ -1602,17 +1535,7 @@
         gap: 0.75rem;
       }
 
-      /* Card sits under the portrait on a phone instead of hanging off its corner */
-      .availcard {
-        position: static;
-        width: 100%;
-        max-width: 300px;
-        margin: 1.25rem auto 0;
-        animation: none;
-      }
-
       .hero-visual {
-        padding-bottom: 0;
         min-height: 0;
       }
 
@@ -1820,17 +1743,6 @@
             <div class="profile-card-creative">
               <img src="assets/profile.jpg" width="344" height="524" loading="eager" alt="Hannah Marie Dela Cruz" onerror="this.src='https://placehold.co/344x524/381d4a/e2bbfb?text=Hannah+Marie'">
             </div>
-
-            <aside class="availcard">
-              <p class="availcard__status">
-                <span class="availcard__dot" aria-hidden="true"></span>
-                Open for Opportunities
-              </p>
-              <p class="availcard__detail">Open to internships and junior developer roles.</p>
-              <a href="#contact" class="availcard__link">
-                <i data-lucide="arrow-right"></i> Get in touch
-              </a>
-            </aside>
           </div>
         </div>
       </div>
@@ -2087,52 +1999,6 @@
             </div>
           </div>
         </div>
-
-        <div class="glass-card contact-form-card">
-          <h3>Send a Quick Message</h3>
-          <p class="contact-info-sub">Fill out the form below and I'll get back to you as soon as possible.</p>
-
-          <form id="contactForm" class="contact-form" data-endpoint="https://api.web3forms.com/submit">
-            <!-- Web3Forms access key. Public by design: it only permits sending
-                 to the address the key is registered to. -->
-            <input type="hidden" name="access_key" value="a3f25740-9f2b-440d-93c4-51485556f40e">
-            <input type="hidden" name="from_name" value="Portfolio Contact Form">
-
-            <!-- Honeypot: hidden from people, filled in by bots, which Web3Forms then drops -->
-            <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
-
-            <div class="form-group-row">
-              <div class="form-group">
-                <label for="userName">Your Name *</label>
-                <input type="text" id="userName" name="name" autocomplete="name" class="form-input" placeholder="e.g. Maria Santos" required>
-              </div>
-
-              <div class="form-group">
-                <label for="userEmail">Your Email *</label>
-                <input type="email" id="userEmail" name="email" autocomplete="email" class="form-input" placeholder="e.g. maria@example.com" required>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="userSubject">Subject *</label>
-              <input type="text" id="userSubject" name="subject" class="form-input" placeholder="e.g. Project Inquiry / Collaboration" required>
-            </div>
-
-            <div class="form-group">
-              <label for="userMessage">Message *</label>
-              <textarea id="userMessage" name="message" rows="5" class="form-textarea" placeholder="Write your message here..." required></textarea>
-            </div>
-
-            <div id="formStatus" class="form-status" role="status" aria-live="polite">
-              <i data-lucide="check-circle"></i>
-              <span>Thank you! Your message has been sent successfully.</span>
-            </div>
-
-            <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">
-              <i data-lucide="send"></i> Send Message
-            </button>
-          </form>
-        </div>
       </div>
     </section>
   </main>
@@ -2370,63 +2236,6 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && resumeModal.classList.contains('open')) closeResume();
-    });
-
-    // Contact form interaction
-    const contactForm = document.getElementById('contactForm');
-    const formStatus = document.getElementById('formStatus');
-
-    const formStatusText = formStatus.querySelector('span');
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
-    const MY_EMAIL = 'hannahmariedelacruz07@gmail.com'; 
-
-    function showStatus(kind, message) {
-      formStatus.classList.remove('success', 'error');
-      formStatus.classList.add(kind);
-      formStatusText.textContent = message;
-      setTimeout(() => formStatus.classList.remove(kind), 6000);
-    }
-
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const data = new FormData(contactForm);
-      const endpoint = contactForm.dataset.endpoint;
-
-      // No form backend configured yet: hand the message to the visitor's mail app
-      // so the button still does something real on a static Vercel deploy.
-      if (!endpoint) {
-        const body = `From: ${data.get('name')} <${data.get('email')}>\n\n${data.get('message')}`;
-        window.location.href =
-          `mailto:${MY_EMAIL}?subject=${encodeURIComponent(data.get('subject'))}&body=${encodeURIComponent(body)}`;
-        showStatus('success', 'Opening your email app so you can send the message.');
-        return;
-      }
-
-      const originalLabel = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending…';
-
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          body: data,
-          headers: { Accept: 'application/json' }
-        });
-        // Web3Forms reports rejection in the body, so the status code alone is not enough
-        const result = await res.json().catch(() => ({}));
-        if (!res.ok || result.success === false) throw new Error(result.message || res.status);
-
-        contactForm.reset();
-        showStatus('success', 'Thank you! Your message has been sent successfully.');
-      } catch (err) {
-        // The real reason goes to the console; visitors get the plain message
-        console.error('Contact form failed:', err);
-        showStatus('error', `Sorry, that didn't send. Please email me at ${MY_EMAIL}.`);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalLabel;
-      }
     });
 
     // Ambient sparkles canvas animation
